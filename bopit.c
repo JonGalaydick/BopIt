@@ -39,7 +39,7 @@ int score = 0;
 int turn = 0; //turn number, used to index array of commands
 long delayTime = 5000; //wait time for user to make an action
 
-int commands[99]; //game commands
+int commands[100]; //game commands
 
 unsigned long previousMills = 0;
 
@@ -109,6 +109,10 @@ void loop() {
 				LCD_update("Correct!");
 				delayTime -= 40;
 				previousMills = currentMills; //reset countdown for next turn
+				if (score == 99) {
+					LCD_update("You Win!!!")
+					gameOn = false;
+				}
 			} else if (userChoice != 0 && userChoice != command[turn]) {
 				//incorrect action made in the time frame
 				LCD_update("Game Over!");
@@ -131,7 +135,8 @@ void resetGame() {
 		gameOn = true;
 		previousMills = millis(); //set starting time of the game
 		
-		for (int i = 0; i < 100; i++){ //used to generate random commands 
+		//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands 
+		for (int i = 0; i < 100; i++) {
 			commands[i] = random(1, 4); //random commands are 1, 2, 3
 			//0 maps to the button
 			//1 maps to the sldier
