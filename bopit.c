@@ -18,12 +18,13 @@
 #define NOTE_FS1 46
 #define NOTE_G1  49
 
-//set all LEDs and buttons to needed inputs
+//set all pins that the arduino needs
 //numbers are obviously not correct as of now
 const int startButton = 4;
 const int userButton = 5;
 const int userSlider = 6;
 const int userToggle = 7;
+const int speakerPin = 8;
 //does the LCD screen need something?
 
 //store the state of the inputs (might not need this)
@@ -33,10 +34,10 @@ const int userToggle = 7;
 // int userToggleState = 0;
 
 boolean gameOn = false;
+boolean nextCommand = true;
 
-int userChoice = 0;
-int score = 0;
-int turn = 0; //turn number, used to index array of commands
+int userChoice = 0; //what the user action is during gameplay
+int score = 0; //also indexes command array
 long delayTime = 5000; //wait time for user to make an action
 
 int commands[100]; //game commands
@@ -44,10 +45,8 @@ int commands[100]; //game commands
 unsigned long previousMills = 0;
 
 
-
-
 void setup() {
-	//set start button, user button, slider, toggle to inputs
+	//set start button, user button, slider, toggle digital inputs on the microprocessor
 	//setup the LCD display
 	
 	// set up the LCD's number of columns and rows:
@@ -65,7 +64,7 @@ void loop() {
 	// userToggleState = digitalRead(userToggle);
 	
 	//when the game button is pressed setup 
-	if (startButtonState == 1) { //how to represent high? 1?
+	if (startButtonState == HIGH) { //how to represent high? 1? HIGH?
 		resetGame();
 	}
 	
@@ -75,23 +74,25 @@ void loop() {
 	//the main loop for playing the game
 	if (gameOn) {
 		
-		//this part only gets done once per player turn
-		//need to think of a way to make it happen only once
-		if (command[score] == 1) {
+		//give the player their command
+		if (nextCommand) {
+			if (command[score] == 1) {
 			//give button command sound
 			LCD_update("BUTTON");
-			playSound(NOTE_A3)
-		} else if (command[score] == 2) {
-			//give slider command sound
-			LCD_update("SLIDE");
-			playSound(NOTE_C4)
-		} else if (command[score] == 3) {
-			//give toggle command sound
-			LCD_update("TOGGLE");
-			playSound(NOTE_G1)
-		} else {
-			LCD_update("COMMAND ISSUE");
+			playSound(NOTE_A3);
+			} else if (command[score] == 2) {
+				//give slider command sound
+				LCD_update("SLIDE");
+				playSound(NOTE_C4);
+			} else if (command[score] == 3) {
+				//give toggle command sound
+				LCD_update("TOGGLE");
+				playSound(NOTE_G1);
+			} else {
+				LCD_update("COMMAND ISSUE");
+			}
 		}
+
 		
 		if (currentMills - previousMills > delayTime) {
 			
@@ -109,8 +110,9 @@ void loop() {
 				LCD_update("Correct!");
 				delayTime -= 40;
 				previousMills = currentMills; //reset countdown for next turn
+				nextCommand = true; //so we can give the user their next command
 				if (score == 99) {
-					LCD_update("You Win!!!")
+					LCD_update("You Win!!!");
 					gameOn = false;
 				}
 			} else if (userChoice != 0 && userChoice != command[turn]) {
@@ -120,7 +122,7 @@ void loop() {
 			}
 			
 		} else {
-			LCD_update("Game Over!")
+			LCD_update("Game Over!");
 			gameOn = false;
 		}
 			
@@ -130,18 +132,18 @@ void loop() {
 
 //called when game start button is pressed
 void resetGame() {
-		score = 0;
-		turn = 0;
-		gameOn = true;
-		previousMills = millis(); //set starting time of the game
-		
-		//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands 
-		for (int i = 0; i < 100; i++) {
-			commands[i] = random(1, 4); //random commands are 1, 2, 3
-			//0 maps to the button
-			//1 maps to the sldier
-			//2 maps to the toggle
-		}
+	score = 0;
+	turn = 0;
+	gameOn = true;
+	previousMills = millis(); //set starting time of the game
+	
+	//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands 
+	for (int i = 0; i < 100; i++) {
+		commands[i] = random(1, 4); //random commands are 1, 2, 3
+		//0 maps to the button
+		//1 maps to the sldier
+		//2 maps to the toggle
+	}
 }
 
 //updates the LCD screen with game state and current score
@@ -159,7 +161,7 @@ void LCD_update(String text) {
 
 //takes the int representation of a sound and plays it to the speaker
 void playSound(int sound) {
-	
+	tone(speakerPin, sound, 500); //500 millisecond duration
 }
 
 
