@@ -27,6 +27,8 @@ const int userToggle = 7;
 const int speakerPin = 8;
 //does the LCD screen need something?
 
+int previousSliderState;
+
 //store the state of the inputs (might not need this)
 // int stateButtonState = 0;
 // int userButtonState = 0;
@@ -98,7 +100,8 @@ void loop() {
 			
 			if (digitalRead(userButton) == HIGH) {
 				userChoice = 1;
-			} else if (digitalRead(userSlider) == HIGH) {
+			} else if (digitalRead(userSlider) != previousSliderState) { 
+				//done on a change of state since it doesnt automatically go back to LOW
 				userChoice = 2;
 			} else if (digitalRead(userToggle) == HIGH) {
 				userChoice = 3;
@@ -136,6 +139,7 @@ void resetGame() {
 	turn = 0;
 	gameOn = true;
 	previousMills = millis(); //set starting time of the game
+	previousSliderState = digitalRead(userSlider);
 	
 	//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands 
 	for (int i = 0; i < 100; i++) {
