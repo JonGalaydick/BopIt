@@ -140,9 +140,9 @@ void resetGame() {
 	previousSliderState = digitalRead(userSlider);
 	
 	//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands
-	srand(time(0));	//ensures different randoms every time
+	randomSeed(analogRead(0));//ensures different randoms every time
 	for (int i = 0; i < 100; i++) {
-		commands[i] = (rand() % 3) + 1; //random commands are 1, 2, 3
+		commands[i] = random(1, 4); //random commands are 1, 2, 3
 		//0 maps to the button
 		//1 maps to the sldier
 		//2 maps to the toggle
