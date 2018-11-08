@@ -103,6 +103,7 @@ void loop() {
 			} else if (digitalRead(userSlider) != previousSliderState) { 
 				//done on a change of state since it doesnt automatically go back to LOW
 				userChoice = 2;
+				previousSliderState = digitalRead(userSlider);
 			} else if (digitalRead(userToggle) == HIGH) {
 				userChoice = 3;
 			}
