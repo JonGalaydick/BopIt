@@ -6,17 +6,14 @@
 
 
 #include <LiquidCrystal.h>
+#include <stdio.h> 
+#include <stdlib.h> 
+#include<time.h> 
 
 //example tone definitions, have to finalize this eventually
 #define NOTE_B0  31
-#define NOTE_C1  33
-#define NOTE_CS1 35
-#define NOTE_D1  37
-#define NOTE_DS1 39
-#define NOTE_E1  41
-#define NOTE_F1  44
-#define NOTE_FS1 46
-#define NOTE_G1  49
+#define NOTE_B2  123
+#define NOTE_B3  247
 
 //set all pins that the arduino needs
 //numbers are obviously not correct as of now
@@ -81,15 +78,15 @@ void loop() {
 			if (command[score] == 1) {
 			//give button command sound
 			LCD_update("BUTTON");
-			playSound(NOTE_A3);
+			playSound(NOTE_B0);
 			} else if (command[score] == 2) {
 				//give slider command sound
 				LCD_update("SLIDE");
-				playSound(NOTE_C4);
+				playSound(NOTE_B2);
 			} else if (command[score] == 3) {
 				//give toggle command sound
 				LCD_update("TOGGLE");
-				playSound(NOTE_G1);
+				playSound(NOTE_B3);
 			} else {
 				LCD_update("COMMAND ISSUE");
 			}
@@ -142,9 +139,10 @@ void resetGame() {
 	previousMills = millis(); //set starting time of the game
 	previousSliderState = digitalRead(userSlider);
 	
-	//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands 
+	//for (int i = 0; i < sizeof(commands)/sizeof(commands[0]); i++){ //used to generate random commands
+	srand(time(0));	//ensures different randoms every time
 	for (int i = 0; i < 100; i++) {
-		commands[i] = random(1, 4); //random commands are 1, 2, 3
+		commands[i] = (rand() % 3) + 1; //random commands are 1, 2, 3
 		//0 maps to the button
 		//1 maps to the sldier
 		//2 maps to the toggle
