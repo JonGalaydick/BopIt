@@ -41,7 +41,7 @@ long delayTime = 5000; //wait time for user to make an action
 
 int commands[100]; //game commands
 
-unsigned long previousMills = 0;
+long previousMills = 0;
 
 const int rs = 6, en = 5, d4 = 9, d5 = 10, d6 = 11, d7 = 12;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -56,7 +56,7 @@ void setup() {
   //set start button, user button, slider, toggle digital inputs on the microprocessor
   //setup the LCD display
 
-  pinMode(A5, INPUT); //start button
+  pinMode(13, INPUT); //start button
   pinMode(userButton, INPUT);
   pinMode(userSlider, INPUT);
   pinMode(userToggle, INPUT);
@@ -71,14 +71,14 @@ void setup() {
 
 void loop() {
 
-  
+  delay(500);
   // stateButtonState = digitalRead(startButton);
   // userButtonState = digitalRead(userButton);
   // userSliderState = digitalRead(userSlider);
   // userToggleState = digitalRead(userToggle);
   
   //when the game button is pressed setup 
-  if (digitalRead(A5) == HIGH) { //how to represent high? 1? HIGH?
+  if (digitalRead(13) == HIGH) { //how to represent high? 1? HIGH?
     resetGame();
   }
   
@@ -91,9 +91,9 @@ void loop() {
     //give the player their command
     if (nextCommand) {
       if (commands[score] == 1) {
-      //give button command sound
-      LCD_update("BUTTON");
-      playSound(NOTE_B0);
+        //give button command sound
+        LCD_update("BUTTON");
+        playSound(NOTE_B0);
       } else if (commands[score] == 2) {
         //give slider command sound
         LCD_update("SLIDE");
@@ -109,7 +109,8 @@ void loop() {
 
     
     if (currentMills - previousMills > delayTime) {
-      
+      nextCommand = false;
+      previousMills = currentMills;
       if (digitalRead(userButton) == HIGH) {
         userChoice = 1;
       } else if (digitalRead(userSlider) != previousSliderState) { 
@@ -136,11 +137,11 @@ void loop() {
         LCD_update("Game Over!");
         gameOn = false;
       }
-      
-    } else {
-      LCD_update("Game Over!");
-      gameOn = false;
     }
+//    } else {
+//      LCD_update("Game Over!");
+//      gameOn = false;
+//    }
       
   }
   
@@ -177,7 +178,7 @@ void LCD_update(String text) {
   lcd.print(text);
   
   //convert score to a string variant, then print it on the LCD on a new line
-  lcd.setCursor(3,0);
+  lcd.setCursor(3,1);
   char scoreString[12];
   sprintf(scoreString, "Score: %d", score);
   lcd.print(scoreString);
