@@ -71,7 +71,6 @@ void setup() {
 
 void loop() {
 
-  delay(500);
   // stateButtonState = digitalRead(startButton);
   // userButtonState = digitalRead(userButton);
   // userSliderState = digitalRead(userSlider);
@@ -107,8 +106,9 @@ void loop() {
       }
     }
 
+//    delay(delayTime);
     
-    if (currentMills - previousMills > delayTime) {
+//    if (currentMills - previousMills > delayTime) {
       nextCommand = false;
       previousMills = currentMills;
       if (digitalRead(userButton) == HIGH) {
@@ -116,7 +116,7 @@ void loop() {
       } else if (digitalRead(userSlider) != previousSliderState) { 
         //done on a change of state since it doesnt automatically go back to LOW
         userChoice = 2;
-        previousSliderState = digitalRead(userSlider);
+//        previousSliderState = digitalRead(userSlider);
       } else if (digitalRead(userToggle) == HIGH) {
         userChoice = 3;
       }
@@ -125,10 +125,12 @@ void loop() {
         //correct action made in correct amount of time
         score += 1;
         LCD_update("Correct!");
-        delayTime -= 40;
+        delayTime -= 40;  
+        userChoice = 0;
         previousMills = currentMills; //reset countdown for next turn
         nextCommand = true; //so we can give the user their next command
-        if (score == 99) {
+        delay(500);
+        if (score == 6) {
           LCD_update("You Win!!!");
           gameOn = false;
         }
@@ -137,8 +139,8 @@ void loop() {
         LCD_update("Game Over!");
         gameOn = false;
       }
-    }
-//    } else {
+//    } 
+//    else {
 //      LCD_update("Game Over!");
 //      gameOn = false;
 //    }
@@ -150,11 +152,8 @@ void loop() {
 //called when game start button is pressed
 void resetGame() {
   
-  lcd.setCursor(0, 1);
+//  LCD_update("BOP IT");
   // print the number of seconds since reset:
-  lcd.print(millis() / 1000);
-
-
   
   score = 0;
   gameOn = true;
