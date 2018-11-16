@@ -61,6 +61,7 @@ void setup() {
   pinMode(userSlider, INPUT);
   pinMode(userToggle, INPUT);
   pinMode(speakerPin, OUTPUT);
+  pinMode(3, OUTPUT);
   
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
@@ -86,39 +87,46 @@ void loop() {
   
   //the main loop for playing the game
   if (gameOn) {
-    
     //give the player their command
     if (nextCommand) {
       if (commands[score] == 1) {
         //give button command sound
         LCD_update("BUTTON");
         playSound(NOTE_B0);
+        nextCommand=false;
       } else if (commands[score] == 2) {
         //give slider command sound
         LCD_update("SLIDE");
         playSound(NOTE_B2);
+        nextCommand=false;
       } else if (commands[score] == 3) {
         //give toggle command sound
         LCD_update("TOGGLE");
         playSound(NOTE_B3);
+        nextCommand=false;
       } else {
         LCD_update("COMMAND ISSUE");
+        nextCommand=false;
       }
     }
 
-//    delay(delayTime);
-    
-//    if (currentMills - previousMills > delayTime) {
-      nextCommand = false;
-      previousMills = currentMills;
+////    delay(delayTime);
+  
+    if (currentMills - previousMills <= delayTime) {
+//      nextCommand = false;
+      digitalWrite(3, !digitalRead(3));
+      
       if (digitalRead(userButton) == HIGH) {
         userChoice = 1;
-      } else if (digitalRead(userSlider) != previousSliderState) { 
+        previousMills = currentMills;
+      } else if (digitalRead(userSlider) == HIGH) { 
         //done on a change of state since it doesnt automatically go back to LOW
         userChoice = 2;
+        previousMills = currentMills;
 //        previousSliderState = digitalRead(userSlider);
       } else if (digitalRead(userToggle) == HIGH) {
         userChoice = 3;
+        previousMills = currentMills;
       }
       
       if (userChoice == commands[score]) {
@@ -130,21 +138,22 @@ void loop() {
         previousMills = currentMills; //reset countdown for next turn
         nextCommand = true; //so we can give the user their next command
         delay(500);
-        if (score == 6) {
+        if (score == 99) {
           LCD_update("You Win!!!");
           gameOn = false;
         }
-      } else if (userChoice != 0 && userChoice != commands[score]) {
+      } 
+      else if (userChoice != 0 && userChoice != commands[score]) {
         //incorrect action made in the time frame
-        LCD_update("Game Over!");
+        LCD_update("Incorrect GG :(");
         gameOn = false;
       }
-//    } 
-//    else {
-//      LCD_update("Game Over!");
-//      gameOn = false;
-//    }
-      
+    } 
+    else {
+      digitalWrite(3, LOW);
+      gameOn = false;
+      LCD_update("Game Over!");
+    }
   }
   
 }
