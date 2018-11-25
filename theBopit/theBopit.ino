@@ -8,7 +8,7 @@
 #include <LiquidCrystal.h>
 #include <stdio.h> 
 #include <stdlib.h> 
-#include<time.h> 
+#include <time.h> 
 
 //example tone definitions, have to finalize this eventually
 #define NOTE_B0  31
@@ -22,7 +22,6 @@ const int userButton = 2; //digital 2
 const int userSlider = 7; //digital 7
 const int userToggle = 4; //digital 4
 const int speakerPin = 8; //digital 8
-//does the LCD screen need something?
 
 int previousSliderState;
 
@@ -119,11 +118,11 @@ void loop() {
       if (digitalRead(userButton) == HIGH) {
         userChoice = 1;
         previousMills = currentMills;
-      } else if (digitalRead(userSlider) == HIGH) { 
+      } else if (digitalRead(userSlider) != previousSliderState) { 
         //done on a change of state since it doesnt automatically go back to LOW
         userChoice = 2;
         previousMills = currentMills;
-//        previousSliderState = digitalRead(userSlider);
+        previousSliderState = digitalRead(userSlider);
       } else if (digitalRead(userToggle) == HIGH) {
         userChoice = 3;
         previousMills = currentMills;
